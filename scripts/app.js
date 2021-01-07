@@ -13,12 +13,14 @@ const gameboard = (() => {
   let scoreboard = ['', '', '', '', '', '', '', '', '']
   let scoreX = 0
   let scoreO = 0
+  let filledSpaces = 0
   let playerTurn = true
 
   const restartGame = () => {
     scoreboard = ['', '', '', '', '', '', '', '', '']
     scoreX = 0
     scoreO = 0
+    filledSpaces = 0
     playerTurn = true
     endGame.classList.remove('end')
     gameboardEl.classList.remove('over')
@@ -50,16 +52,8 @@ const gameboard = (() => {
         }
       })
     })
-    return (scoreX === 3 && 'X won') || (scoreO === 3 && 'O won') || 'Draw'
-  }
-
-  const random = () => {
-    const idx = Math.floor(Math.random() * 9)
-    if (scoreboard[idx]) {
-      random()
-    }
-    console.log(idx)
-    return idx
+    if (filledSpaces === 9) return 'tie'
+    return (scoreX === 3 && 'X') || (scoreO === 3 && 'O') || null
   }
 
   const updateScoreboard = (index, player) => {
@@ -69,11 +63,13 @@ const gameboard = (() => {
         .map((cell, index) => !cell && index)
         .filter(e => e && e)
       const random = empty[Math.floor(Math.random() * empty.length)]
-      console.log(random)
+      // console.log(random)
+      // console.log('Best move: ', bestMove(scoreboard))
       index = random
     }
     if (scoreboard[index]) return
     scoreboard[index] = player.name
+    filledSpaces++
     createGame({ X, O })
   }
 
@@ -96,11 +92,16 @@ const gameboard = (() => {
     if (scoreX === 3) {
       message.textContent = 'X Won!'
       endOfGame()
+      return
     } else if (scoreO === 3) {
       message.textContent = 'O Won!'
       endOfGame()
+      return
+    } else if (filledSpaces === 9) {
+      message.textContent = 'Draw!'
+      endOfGame()
+      return
     }
-    if (scoreX === 3 || scoreO === 3) return
     let cellNumber
     document.querySelectorAll('.cell').forEach(cell => {
       cell.addEventListener('click', e => {
