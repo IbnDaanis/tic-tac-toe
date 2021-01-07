@@ -14,6 +14,12 @@ const gameboard = (() => {
     [0, 4, 8],
     [2, 4, 6],
   ]
+  const restartGame = () => {
+    scoreboard = ['', '', '', '', '', '', '', '', '']
+    scoreX = 0
+    scoreO = 0
+    player = true
+  }
 
   const createGame = players => {
     gameboardEl.innerHTML = ''
@@ -84,6 +90,7 @@ const gameboard = (() => {
   }
   return {
     createGame,
+    restartGame,
     scoreboard,
     updateScoreboard,
     winningScores,
@@ -99,6 +106,22 @@ const player = (XorO, AIorHuman) => {
 }
 
 const X = player('X', 'human')
-const O = player('O', 'AI')
+let O
 
-gameboard.createGame({ X, O })
+const mainMenu = document.querySelector('.main-menu')
+const humanBtn = document.querySelector('#human')
+const aiBtn = document.querySelector('#ai')
+
+humanBtn.onclick = () => {
+  O = player('O', 'human')
+  mainMenu.classList.add('started')
+  gameboard.restartGame()
+  gameboard.createGame({ X, O })
+}
+
+aiBtn.onclick = () => {
+  O = player('O', 'AI')
+  mainMenu.classList.add('started')
+  gameboard.restartGame()
+  gameboard.createGame({ X, O })
+}

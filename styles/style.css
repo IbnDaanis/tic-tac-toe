@@ -63,4 +63,31 @@ body {
   color: white;
   cursor: pointer;
 }
+
+.container .main-menu {
+  width: 300px;
+  margin: 0 auto;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  -webkit-transform: translateY(-500px);
+          transform: translateY(-500px);
+  -webkit-transition: -webkit-transform 0.5s ease-in-out;
+  transition: -webkit-transform 0.5s ease-in-out;
+  transition: transform 0.5s ease-in-out;
+  transition: transform 0.5s ease-in-out, -webkit-transform 0.5s ease-in-out;
+}
+
+.container .main-menu button {
+  width: 130px;
+  height: 40px;
+}
+
+.container .main-menu.started {
+  -webkit-transform: translateY(0px);
+          transform: translateY(0px);
+}
 /*# sourceMappingURL=style.css.map */

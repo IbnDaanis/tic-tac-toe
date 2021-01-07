@@ -55,4 +55,21 @@ body {
       cursor: pointer;
     }
   }
+
+  .main-menu {
+    width: 300px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    transform: translateY(-500px);
+    transition: transform 0.5s ease-in-out;
+    button {
+      width: 130px;
+      height: 40px;
+    }
+
+    &.started {
+      transform: translateY(0px);
+    }
+  }
 }
