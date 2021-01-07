@@ -2,7 +2,7 @@ const gameboard = (() => {
   let scoreboard = ['', '', '', '', '', '', '', '', '']
   let scoreX = 0
   let scoreO = 0
-  let player = false
+  let player = true
   const gameboardEl = document.querySelector('#gameboardEl')
   const winningScores = [
     [0, 1, 2],
@@ -15,7 +15,7 @@ const gameboard = (() => {
     [2, 4, 6],
   ]
 
-  const createGame = () => {
+  const createGame = players => {
     gameboardEl.innerHTML = ''
     for (let i = 0; i < 9; i++) {
       const cell = document.createElement('div')
@@ -25,7 +25,7 @@ const gameboard = (() => {
       gameboardEl.appendChild(cell)
     }
     gameboardEl.style.opacity = '1'
-    playerMove()
+    playerMove(players)
   }
 
   const checkWinner = () => {
@@ -44,19 +44,19 @@ const gameboard = (() => {
     return (scoreX === 3 && 'X won') || (scoreO === 3 && 'O won') || 'Draw'
   }
   const updateScoreboard = (index, player) => {
+    console.log(player.type)
     if (scoreboard[index]) return
-    scoreboard[index] = player
-    createGame()
+    scoreboard[index] = player.name
+    createGame({ X, O })
   }
 
-  const playerMove = () => {
+  const playerMove = players => {
     document.querySelectorAll('.cell').forEach(cell => {
       cell.addEventListener('click', e => {
         if (scoreX === 3 || scoreO === 3) return
         const cellNumber = e.target.dataset.index
-
+        updateScoreboard(cellNumber, player ? players.O : players.X)
         player = !player
-        updateScoreboard(cellNumber, player ? 'O' : 'X')
         console.log(checkWinner())
       })
     })
@@ -71,5 +71,13 @@ const gameboard = (() => {
   }
 })()
 
-gameboard.createGame()
-gameboard.playerMove()
+const player = (XorO, AIorHuman) => {
+  const name = XorO
+  const type = AIorHuman
+  return { name, type }
+}
+
+const X = player('X', 'human')
+const O = player('O', 'human')
+
+gameboard.createGame({ X, O })
