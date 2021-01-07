@@ -6,7 +6,6 @@
 
 - Traditional Tic Tac Toe
 - Can either play with a friend or the computer
-- Can selected unbeatable AI difficulty
 
 ## Preview:
 

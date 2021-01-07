@@ -88,7 +88,6 @@ const gameboard = (() => {
 
   const playerMove = players => {
     checkWinner()
-    console.log(checkWinner())
     if (scoreX === 3) {
       message.textContent = 'X Won!'
       endOfGame()
