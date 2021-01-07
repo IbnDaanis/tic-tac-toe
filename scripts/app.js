@@ -56,7 +56,12 @@ const gameboard = (() => {
   const updateScoreboard = (index, player) => {
     // console.log(player.type)
     if (player.type === 'AI') {
-      index = scoreboard.lastIndexOf('X') + 1
+      const empty = scoreboard
+        .map((cell, index) => !cell && index)
+        .filter(e => e && e)
+      const random = empty[Math.floor(Math.random() * empty.length)]
+      console.log(random)
+      index = random
     }
     if (scoreboard[index]) return
     scoreboard[index] = player.name
@@ -94,6 +99,6 @@ const player = (XorO, AIorHuman) => {
 }
 
 const X = player('X', 'human')
-const O = player('O', 'human')
+const O = player('O', 'AI')
 
 gameboard.createGame({ X, O })
