@@ -1,4 +1,5 @@
 @import url("https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,300;0,700;1,400&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@700&display=swap");
 * {
   margin: 0;
   padding: 0;
@@ -12,43 +13,54 @@
   --dark-less-teal: #118c76;
   --medium-teal: #26bfa3;
   --light-teal: #0cf2b1;
-  --brown: #e6bfa9;
+  --brown: #866c5d;
 }
 
 body {
-  background: var(--dark-teal);
+  height: 100vh;
+  background: #f0f0f0;
+}
+
+.container {
+  padding-top: 2rem;
 }
 
 .container h1 {
-  font-size: 3rem;
-  font-weight: 700;
-  color: #f1fcff;
+  font-size: 5rem;
+  color: #49435e;
+  text-shadow: 2px 2px #3db2f5;
   text-align: center;
-  margin: 2rem auto;
+  font-family: 'Josefin Sans', sans-serif;
+  letter-spacing: -3px;
 }
 
 .container .gameboard {
+  border-radius: 10px;
+  overflow: hidden;
   width: 450px;
   height: 450px;
   margin: 5rem auto;
-  background: var(--dark-less-teal);
+  background: white;
   display: -ms-grid;
   display: grid;
-  -ms-grid-rows: (150px)[3];
-      grid-template-rows: repeat(3, 150px);
-  -ms-grid-columns: (150px)[3];
-      grid-template-columns: repeat(3, 150px);
-  border: 1px solid var(--light-teal);
+  -ms-grid-rows: (1fr)[3];
+      grid-template-rows: repeat(3, 1fr);
+  grid-gap: 1%;
+  -ms-grid-columns: (1fr)[3];
+      grid-template-columns: repeat(3, 1fr);
+  opacity: 0;
+  -webkit-transition: opacity 1s ease-in-out 0.3s;
+  transition: opacity 1s ease-in-out 0.3s;
 }
 
 .container .gameboard .cell {
-  border: 2px solid var(--light-teal);
+  background: #3d87f5;
   display: -ms-grid;
   display: grid;
   place-items: center;
   font-size: 5rem;
   font-weight: 600;
-  color: var(--brown);
+  color: white;
   cursor: pointer;
 }
 /*# sourceMappingURL=style.css.map */
