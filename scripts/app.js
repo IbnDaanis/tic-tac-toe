@@ -1,8 +1,4 @@
 const gameboard = (() => {
-  let scoreboard = ['', '', '', '', '', '', '', '', '']
-  let scoreX = 0
-  let scoreO = 0
-  let player = true
   const gameboardEl = document.querySelector('#gameboardEl')
   const winningScores = [
     [0, 1, 2],
@@ -14,11 +10,16 @@ const gameboard = (() => {
     [0, 4, 8],
     [2, 4, 6],
   ]
+  let scoreboard = ['', '', '', '', '', '', '', '', '']
+  let scoreX = 0
+  let scoreO = 0
+  let playerTurn = true
+
   const restartGame = () => {
     scoreboard = ['', '', '', '', '', '', '', '', '']
     scoreX = 0
     scoreO = 0
-    player = true
+    playerTurn = true
   }
 
   const createGame = players => {
@@ -82,12 +83,15 @@ const gameboard = (() => {
     document.querySelectorAll('.cell').forEach(cell => {
       cell.addEventListener('click', e => {
         cellNumber = e.target.dataset.index
-        updateScoreboard(cellNumber, player ? players.O : players.X)
+        updateScoreboard(cellNumber, playerTurn ? players.O : players.X)
       })
     })
-    player = !player
-    player && players.O.type === 'AI' && updateScoreboard(cellNumber, players.O)
+    playerTurn = !playerTurn
+    playerTurn &&
+      players.O.type === 'AI' &&
+      updateScoreboard(cellNumber, players.O)
   }
+
   return {
     createGame,
     restartGame,
