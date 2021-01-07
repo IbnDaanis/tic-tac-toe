@@ -20,6 +20,8 @@ const gameboard = (() => {
     scoreX = 0
     scoreO = 0
     playerTurn = true
+    endGame.classList.remove('end')
+    gameboardEl.classList.remove('over')
   }
 
   const createGame = players => {
@@ -75,9 +77,29 @@ const gameboard = (() => {
     createGame({ X, O })
   }
 
+  const endOfGame = () => {
+    endGame.classList.add('end')
+    gameboardEl.classList.add('over')
+    restartBtn.onclick = () => {
+      restartGame()
+      gameboardEl.style.opacity = '0'
+      setTimeout(() => {
+        mainMenu.style.opacity = '1'
+        mainMenu.classList.remove('started')
+      }, 1000)
+    }
+  }
+
   const playerMove = players => {
     checkWinner()
     console.log(checkWinner())
+    if (scoreX === 3) {
+      message.textContent = 'X Won!'
+      endOfGame()
+    } else if (scoreO === 3) {
+      message.textContent = 'O Won!'
+      endOfGame()
+    }
     if (scoreX === 3 || scoreO === 3) return
     let cellNumber
     document.querySelectorAll('.cell').forEach(cell => {
@@ -92,7 +114,17 @@ const gameboard = (() => {
       updateScoreboard(cellNumber, players.O)
   }
 
+  const mainMenu = document.querySelector('.main-menu')
+  const endGame = document.querySelector('.end-game')
+  const message = document.querySelector('.message')
+  const restartBtn = document.querySelector('#restartBtn')
+  const humanBtn = document.querySelector('#human')
+  const aiBtn = document.querySelector('#ai')
+
   return {
+    mainMenu,
+    humanBtn,
+    aiBtn,
     createGame,
     restartGame,
     scoreboard,
@@ -112,20 +144,16 @@ const player = (XorO, AIorHuman) => {
 const X = player('X', 'human')
 let O
 
-const mainMenu = document.querySelector('.main-menu')
-const humanBtn = document.querySelector('#human')
-const aiBtn = document.querySelector('#ai')
-
-humanBtn.onclick = () => {
+gameboard.humanBtn.onclick = () => {
   O = player('O', 'human')
-  mainMenu.classList.add('started')
+  gameboard.mainMenu.classList.add('started')
   gameboard.restartGame()
   gameboard.createGame({ X, O })
 }
 
-aiBtn.onclick = () => {
+gameboard.aiBtn.onclick = () => {
   O = player('O', 'AI')
-  mainMenu.classList.add('started')
+  gameboard.mainMenu.classList.add('started')
   gameboard.restartGame()
   gameboard.createGame({ X, O })
 }
