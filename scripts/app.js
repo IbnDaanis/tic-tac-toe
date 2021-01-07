@@ -43,23 +43,39 @@ const gameboard = (() => {
     })
     return (scoreX === 3 && 'X won') || (scoreO === 3 && 'O won') || 'Draw'
   }
+
+  const random = () => {
+    const idx = Math.floor(Math.random() * 9)
+    if (scoreboard[idx]) {
+      random()
+    }
+    console.log(idx)
+    return idx
+  }
+
   const updateScoreboard = (index, player) => {
-    console.log(player.type)
+    // console.log(player.type)
+    if (player.type === 'AI') {
+      index = scoreboard.lastIndexOf('X') + 1
+    }
     if (scoreboard[index]) return
     scoreboard[index] = player.name
     createGame({ X, O })
   }
 
   const playerMove = players => {
+    checkWinner()
+    console.log(checkWinner())
+    if (scoreX === 3 || scoreO === 3) return
+    let cellNumber
     document.querySelectorAll('.cell').forEach(cell => {
       cell.addEventListener('click', e => {
-        if (scoreX === 3 || scoreO === 3) return
-        const cellNumber = e.target.dataset.index
+        cellNumber = e.target.dataset.index
         updateScoreboard(cellNumber, player ? players.O : players.X)
-        player = !player
-        console.log(checkWinner())
       })
     })
+    player = !player
+    player && players.O.type === 'AI' && updateScoreboard(cellNumber, players.O)
   }
   return {
     createGame,
