@@ -13,9 +13,8 @@ const gameboard = (() => {
   let scoreboard = ['', '', '', '', '', '', '', '', '']
   let scoreX = 0
   let scoreO = 0
-  let playerTurn = true
   let player = 'X'
-
+  let filledSpaces = 0
   const restartGame = () => {
     scoreboard = ['', '', '', '', '', '', '', '', '']
     scoreX = 0
@@ -39,14 +38,36 @@ const gameboard = (() => {
   }
 
   const playerMove = e => {
+    if (filledSpaces === 9) return
     const index = e.target.dataset.index
     scoreboard[index] = player
-    console.log({ player, scoreboard })
+    filledSpaces++
+    e.target.textContent = player
     if (player === 'X') {
       player = 'O'
     } else if (player === 'O') {
       player = 'X'
     }
+    const winner = checkWinner()
+    console.log(winner)
+  }
+
+  const checkWinner = () => {
+    let winner
+    winningScores.forEach(win => {
+      const scores = []
+      win.forEach(index => {
+        scores.push(scoreboard[index])
+      })
+      if (scores.every(score => score === 'X')) {
+        winner = 'X'
+      } else if (scores.every(score => score === 'O')) {
+        winner = 'O'
+      } else if (filledSpaces === 9) {
+        winner = 'tie'
+      }
+    })
+    return winner
   }
 
   const mainMenu = document.querySelector('.main-menu')
@@ -76,8 +97,6 @@ const player = (XorO, AIorHuman) => {
 
 const X = player('X', 'human')
 let O
-
-console.log(gameboard.humanBtn)
 
 gameboard.humanBtn.onclick = e => {
   O = player('O', 'human')
