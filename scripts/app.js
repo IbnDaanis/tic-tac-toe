@@ -13,7 +13,6 @@ const gameboard = (() => {
   let scoreboard = ['', '', '', '', '', '', '', '', '']
   let scoreX = 0
   let scoreO = 0
-  let filledSpaces = 0
   let playerTurn = true
 
   const restartGame = () => {
@@ -39,39 +38,63 @@ const gameboard = (() => {
     playerMove(players)
   }
 
-  const checkWinner = () => {
-    winningScores.forEach(win => {
-      if (scoreX === 3 || scoreO === 3) return
-      scoreX = 0
-      scoreO = 0
-      win.forEach(cell => {
-        if (scoreboard[cell] === 'X') {
-          scoreX++
-        } else if (scoreboard[cell] === 'O') {
-          scoreO++
+  const checkWinner = () => {}
+
+  function bestMove() {
+    let bestScore = -Infinity
+    let move
+    for (let i = 0; i < 9; i++) {
+      if (scoreboard[i] == '') {
+        scoreboard[i] = 'O'
+        let score = minimax(scoreboard, 0, false)
+        scoreboard[i] = ''
+        if (score > bestScore) {
+          bestScore = score
+          move = i
         }
-      })
-    })
-    if (filledSpaces === 9) return 'tie'
-    return (scoreX === 3 && 'X') || (scoreO === 3 && 'O') || null
+      }
+    }
+    return move
   }
 
-  const updateScoreboard = (index, player) => {
-    // console.log(player.type)
-    if (player.type === 'AI') {
-      const empty = scoreboard
-        .map((cell, index) => !cell && index)
-        .filter(e => e && e)
-      const random = empty[Math.floor(Math.random() * empty.length)]
-      // console.log(random)
-      // console.log('Best move: ', bestMove(scoreboard))
-      index = random
-    }
-    if (scoreboard[index]) return
-    scoreboard[index] = player.name
-    filledSpaces++
-    createGame({ X, O })
+  let scores = {
+    X: 10,
+    O: -10,
+    tie: 0,
   }
+
+  function minimax(board, depth, isMaximizing) {
+    let result = checkWinner()
+    console.log({ scoreX, scoreO, result })
+    if (result !== null) {
+      return scores[result]
+    }
+    if (isMaximizing) {
+      let bestScore = -Infinity
+      for (let i = 0; i < 9; i++) {
+        if (board[i] == '') {
+          board[i] = 'O'
+          let score = minimax(scoreboard, depth + 1, false)
+          board[i] = ''
+          bestScore = Math.max(score, bestScore)
+        }
+      }
+      return bestScore
+    } else {
+      let bestScore = Infinity
+      for (let i = 0; i < 9; i++) {
+        if (board[i] == '') {
+          board[i] = human
+          let score = minimax(scoreboard, depth + 1, true)
+          board[i] = ''
+          bestScore = Math.min(score, bestScore)
+        }
+      }
+      return bestScore
+    }
+  }
+
+  const updateScoreboard = (index, player) => {}
 
   const endOfGame = () => {
     endGame.classList.add('end')
@@ -86,33 +109,7 @@ const gameboard = (() => {
     }
   }
 
-  const playerMove = players => {
-    checkWinner()
-    if (scoreX === 3) {
-      message.textContent = 'X Won!'
-      endOfGame()
-      return
-    } else if (scoreO === 3) {
-      message.textContent = 'O Won!'
-      endOfGame()
-      return
-    } else if (filledSpaces === 9) {
-      message.textContent = 'Draw!'
-      endOfGame()
-      return
-    }
-    let cellNumber
-    document.querySelectorAll('.cell').forEach(cell => {
-      cell.addEventListener('click', e => {
-        cellNumber = e.target.dataset.index
-        updateScoreboard(cellNumber, playerTurn ? players.O : players.X)
-      })
-    })
-    playerTurn = !playerTurn
-    playerTurn &&
-      players.O.type === 'AI' &&
-      updateScoreboard(cellNumber, players.O)
-  }
+  const playerMove = players => {}
 
   const mainMenu = document.querySelector('.main-menu')
   const endGame = document.querySelector('.end-game')
