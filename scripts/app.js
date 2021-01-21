@@ -39,21 +39,25 @@ const gameboard = (() => {
 
   const playerMove = e => {
     if (filledSpaces === 9) return
+    if (checkWinner()) return
     const index = e.target.dataset.index
     scoreboard[index] = player
     filledSpaces++
     e.target.textContent = player
-    if (player === 'X') {
-      player = 'O'
-    } else if (player === 'O') {
-      player = 'X'
-    }
+    // if (player === 'X') {
+    //   player = 'O'
+    // } else if (player === 'O') {
+    //   player = 'X'
+    // }
+
+    console.log({ scoreboard })
+    bestMove()
     const winner = checkWinner()
-    console.log(winner)
+    console.log({ winner })
   }
 
   const checkWinner = () => {
-    let winner
+    let winner = null
     winningScores.forEach(win => {
       const scores = []
       win.forEach(index => {
@@ -68,6 +72,62 @@ const gameboard = (() => {
       }
     })
     return winner
+  }
+
+  function bestMove() {
+    let bestScore = -Infinity
+    let move
+    for (let i = 0; i < 9; i++) {
+      if (scoreboard[i] === '') {
+        scoreboard[i] = 'O'
+        let score = minimax(scoreboard, 0, false)
+        scoreboard[i] = ''
+        if (score > bestScore) {
+          console.log({ score, bestScore })
+          bestScore = score
+          move = i
+        }
+      }
+    }
+    console.log('Best move: ', move)
+    scoreboard[move] = 'O'
+  }
+
+  let scores = {
+    X: 10,
+    O: -10,
+    tie: 0,
+  }
+
+  function minimax(board, depth, isMaximizing) {
+    let result = checkWinner()
+    // console.log({ result })
+    if (result !== null) {
+      return scores[result]
+    }
+    if (isMaximizing) {
+      let bestScore = -Infinity
+      for (let i = 0; i < 9; i++) {
+        if (board[i] === '') {
+          board[i] = 'O'
+          let score = minimax(scoreboard, depth + 1, false)
+          board[i] = ''
+          bestScore = Math.max(score, bestScore)
+        }
+      }
+      return bestScore
+    } else {
+      let bestScore = Infinity
+      for (let i = 0; i < 9; i++) {
+        if (board[i] === '') {
+          board[i] = 'X'
+          let score = minimax(scoreboard, depth + 1, true)
+          board[i] = ''
+          bestScore = Math.min(score, bestScore)
+        }
+      }
+      return bestScore
+    }
   }
 
   const mainMenu = document.querySelector('.main-menu')
@@ -102,9 +162,8 @@ gameboard.humanBtn.onclick = e => {
   O = player('O', 'human')
   gameboard.mainMenu.classList.add('started')
   gameboard.createGame()
+  gameboard.gameboardEl.onclick = e => gameboard.playerMove(e)
 }
-
-gameboard.gameboardEl.onclick = e => gameboard.playerMove(e)
 
 gameboard.aiBtn.onclick = () => {
   O = player('O', 'AI')
