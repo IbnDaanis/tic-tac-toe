@@ -14,12 +14,10 @@ const gameboard = (() => {
   let scoreX = 0
   let scoreO = 0
   let player = 'X'
-  let filledSpaces = 0
   const restartGame = () => {
     scoreboard = ['', '', '', '', '', '', '', '', '']
     scoreX = 0
     scoreO = 0
-    filledSpaces = 0
     playerTurn = true
     endGame.classList.remove('end')
     gameboardEl.classList.remove('over')
@@ -38,20 +36,18 @@ const gameboard = (() => {
   }
 
   const playerMove = e => {
-    if (filledSpaces === 9) return
     if (checkWinner()) return
     const index = e.target.dataset.index
     scoreboard[index] = player
-    filledSpaces++
     e.target.textContent = player
     // if (player === 'X') {
     //   player = 'O'
     // } else if (player === 'O') {
     //   player = 'X'
     // }
-
     console.log({ scoreboard })
     bestMove()
+    createGame()
     const winner = checkWinner()
     console.log({ winner })
   }
@@ -59,37 +55,46 @@ const gameboard = (() => {
   const checkWinner = () => {
     let winner = null
     winningScores.forEach(win => {
-      const scores = []
-      win.forEach(index => {
-        scores.push(scoreboard[index])
-      })
-      if (scores.every(score => score === 'X')) {
+      if (
+        scoreboard[win[0]] === 'X' &&
+        scoreboard[win[1]] === 'X' &&
+        scoreboard[win[2]] === 'X'
+      ) {
         winner = 'X'
-      } else if (scores.every(score => score === 'O')) {
+      } else if (
+        scoreboard[win[0]] === 'O' &&
+        scoreboard[win[1]] === 'O' &&
+        scoreboard[win[2]] === 'O'
+      ) {
         winner = 'O'
-      } else if (filledSpaces === 9) {
-        winner = 'tie'
       }
     })
+    let openSpots = 0
+    for (let i = 0; i < 9; i++) {
+      if (scoreboard[i] === '') {
+        openSpots++
+      }
+    }
+    if (winner == null && openSpots === 0) {
+      winner = 'tie'
+    }
     return winner
   }
 
-  function bestMove() {
+  const bestMove = () => {
     let bestScore = -Infinity
     let move
-    for (let i = 0; i < 9; i++) {
-      if (scoreboard[i] === '') {
+    for (let i = 0; i < 3; i++) {
+      if (scoreboard[i] == '') {
         scoreboard[i] = 'O'
         let score = minimax(scoreboard, 0, false)
         scoreboard[i] = ''
         if (score > bestScore) {
-          console.log({ score, bestScore })
           bestScore = score
           move = i
         }
       }
     }
-    console.log('Best move: ', move)
     scoreboard[move] = 'O'
   }
 
@@ -99,9 +104,8 @@ const gameboard = (() => {
     tie: 0,
   }
 
-  function minimax(board, depth, isMaximizing) {
+  const minimax = (board, depth, isMaximizing) => {
     let result = checkWinner()
-    // console.log({ result })
     if (result !== null) {
       return scores[result]
     }
@@ -110,7 +114,7 @@ const gameboard = (() => {
       for (let i = 0; i < 9; i++) {
         if (board[i] === '') {
           board[i] = 'O'
-          let score = minimax(scoreboard, depth + 1, false)
+          let score = minimax(board, depth + 1, false)
           board[i] = ''
           bestScore = Math.max(score, bestScore)
         }
@@ -121,7 +125,7 @@ const gameboard = (() => {
       for (let i = 0; i < 9; i++) {
         if (board[i] === '') {
           board[i] = 'X'
-          let score = minimax(scoreboard, depth + 1, true)
+          let score = minimax(board, depth + 1, true)
           board[i] = ''
           bestScore = Math.min(score, bestScore)
         }
@@ -144,6 +148,7 @@ const gameboard = (() => {
     humanBtn,
     aiBtn,
     gameboardEl,
+    bestMove,
   }
 })()
 
@@ -158,9 +163,10 @@ const player = (XorO, AIorHuman) => {
 const X = player('X', 'human')
 let O
 
-gameboard.humanBtn.onclick = e => {
+gameboard.humanBtn.onclick = () => {
   O = player('O', 'human')
   gameboard.mainMenu.classList.add('started')
+  gameboard.bestMove()
   gameboard.createGame()
   gameboard.gameboardEl.onclick = e => gameboard.playerMove(e)
 }
@@ -168,5 +174,7 @@ gameboard.humanBtn.onclick = e => {
 gameboard.aiBtn.onclick = () => {
   O = player('O', 'AI')
   gameboard.mainMenu.classList.add('started')
+  gameboard.bestMove()
   gameboard.createGame()
+  gameboard.gameboardEl.onclick = e => gameboard.playerMove(e)
 }
