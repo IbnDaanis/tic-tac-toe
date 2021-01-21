@@ -14,6 +14,7 @@ const gameboard = (() => {
   let scoreX = 0
   let scoreO = 0
   let playerTurn = true
+  let player = 'X'
 
   const restartGame = () => {
     scoreboard = ['', '', '', '', '', '', '', '', '']
@@ -25,7 +26,7 @@ const gameboard = (() => {
     gameboardEl.classList.remove('over')
   }
 
-  const createGame = players => {
+  const createGame = () => {
     gameboardEl.innerHTML = ''
     for (let i = 0; i < 9; i++) {
       const cell = document.createElement('div')
@@ -35,81 +36,18 @@ const gameboard = (() => {
       gameboardEl.appendChild(cell)
     }
     gameboardEl.style.opacity = '1'
-    playerMove(players)
   }
 
-  const checkWinner = () => {}
-
-  function bestMove() {
-    let bestScore = -Infinity
-    let move
-    for (let i = 0; i < 9; i++) {
-      if (scoreboard[i] == '') {
-        scoreboard[i] = 'O'
-        let score = minimax(scoreboard, 0, false)
-        scoreboard[i] = ''
-        if (score > bestScore) {
-          bestScore = score
-          move = i
-        }
-      }
-    }
-    return move
-  }
-
-  let scores = {
-    X: 10,
-    O: -10,
-    tie: 0,
-  }
-
-  function minimax(board, depth, isMaximizing) {
-    let result = checkWinner()
-    console.log({ scoreX, scoreO, result })
-    if (result !== null) {
-      return scores[result]
-    }
-    if (isMaximizing) {
-      let bestScore = -Infinity
-      for (let i = 0; i < 9; i++) {
-        if (board[i] == '') {
-          board[i] = 'O'
-          let score = minimax(scoreboard, depth + 1, false)
-          board[i] = ''
-          bestScore = Math.max(score, bestScore)
-        }
-      }
-      return bestScore
-    } else {
-      let bestScore = Infinity
-      for (let i = 0; i < 9; i++) {
-        if (board[i] == '') {
-          board[i] = human
-          let score = minimax(scoreboard, depth + 1, true)
-          board[i] = ''
-          bestScore = Math.min(score, bestScore)
-        }
-      }
-      return bestScore
+  const playerMove = e => {
+    const index = e.target.dataset.index
+    scoreboard[index] = player
+    console.log({ player, scoreboard })
+    if (player === 'X') {
+      player = 'O'
+    } else if (player === 'O') {
+      player = 'X'
     }
   }
-
-  const updateScoreboard = (index, player) => {}
-
-  const endOfGame = () => {
-    endGame.classList.add('end')
-    gameboardEl.classList.add('over')
-    restartBtn.onclick = () => {
-      restartGame()
-      gameboardEl.style.opacity = '0'
-      setTimeout(() => {
-        mainMenu.style.opacity = '1'
-        mainMenu.classList.remove('started')
-      }, 1000)
-    }
-  }
-
-  const playerMove = players => {}
 
   const mainMenu = document.querySelector('.main-menu')
   const endGame = document.querySelector('.end-game')
@@ -119,18 +57,16 @@ const gameboard = (() => {
   const aiBtn = document.querySelector('#ai')
 
   return {
+    createGame,
+    playerMove,
     mainMenu,
     humanBtn,
     aiBtn,
-    createGame,
-    restartGame,
-    scoreboard,
-    updateScoreboard,
-    winningScores,
-    checkWinner,
-    playerMove,
+    gameboardEl,
   }
 })()
+
+gameboard
 
 const player = (XorO, AIorHuman) => {
   const name = XorO
@@ -141,16 +77,18 @@ const player = (XorO, AIorHuman) => {
 const X = player('X', 'human')
 let O
 
-gameboard.humanBtn.onclick = () => {
+console.log(gameboard.humanBtn)
+
+gameboard.humanBtn.onclick = e => {
   O = player('O', 'human')
   gameboard.mainMenu.classList.add('started')
-  gameboard.restartGame()
-  gameboard.createGame({ X, O })
+  gameboard.createGame()
 }
+
+gameboard.gameboardEl.onclick = e => gameboard.playerMove(e)
 
 gameboard.aiBtn.onclick = () => {
   O = player('O', 'AI')
   gameboard.mainMenu.classList.add('started')
-  gameboard.restartGame()
-  gameboard.createGame({ X, O })
+  gameboard.createGame()
 }
